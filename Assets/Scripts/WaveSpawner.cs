@@ -5,11 +5,13 @@ using UnityEngine.UI;
 
 public class WaveSpawner : MonoBehaviour
 {
-    public Transform enemyPrefab;
+    public Wave[] waves;
 
-    public float timeBetweenWaves = 5f;
+    public float timeBetweenWaves = 15f;
     private float countdown = 2f;
     private int waveIndex = 0;
+    private int index = 0;
+
     public Transform spawnPoint;
     public Text waveCountDownText;
 
@@ -23,22 +25,28 @@ public class WaveSpawner : MonoBehaviour
 
         countdown -= Time.deltaTime;
 
-        waveCountDownText.text = Math.Round(countdown).ToString();
+        waveCountDownText.text = "Time to new wave: " + Math.Round(countdown).ToString();
     }
 
     IEnumerator SpawnWave()
     {
+        Wave wave = waves[index];
+
         for (int i = 0; i < waveIndex; i++)
         {
-            SpawnEnemy();
-            yield return new WaitForSeconds(0.5f);
+            SpawnEnemy(wave.enemy);
+            yield return new WaitForSeconds(0.8f);
         }
+
+        index++;
+
+        if (index >= waves.Length) index = 0;
 
         waveIndex++;
     }
 
-    void SpawnEnemy()
+    void SpawnEnemy(GameObject enemy)
     {
-        Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+        Instantiate(enemy, spawnPoint.position, spawnPoint.rotation);
     }
 }
